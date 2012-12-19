@@ -1,0 +1,99 @@
+<?php include("session.php");?>
+<html>
+<head>
+<script type="text/javascript" src="js/jquery-1.8.2.js"></script>
+<script type="text/javascript" src="js/jquery.lightbox_me.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+<title>Interface Option</title>
+<link rel="stylesheet" type="text/css" href="css/design.css">
+<link rel="stylesheet" type="text/css" href="css/g-buttons.css">
+<div id="popup"></div>
+</head>
+<body>
+	
+<div id="personalexp">
+<table style="margin:10px 10px 10px 10px;width:1000px;height:50px;border:1px solid black;">
+	<tr>
+		<td style="text-align:center;font-size:20px;">Personal Services</td>
+	<tr>
+</table>
+		<form method="post"action="personalexp.php">
+<button style="margin-left:10px;"class="g-button blue " name="buttonresp">Responsibility Center</button>
+<button style="margin-left:10px;"class="g-button blue" name="buttonppa">P.P.A</button>
+<table style="margin:10px 10px 10px 10px;width:1000px;height:50px;border:1px solid black;">
+	<tr>
+		<td style="text-align:center;font-size:18px;border:1px solid black;">P.P.A.</td>
+		<td style="text-align:center;font-size:18px;border:1px solid black;">Amount</td>
+		<td style="text-align:center;font-size:18px;border:1px solid black;">Action</td>
+	</tr>
+	<tr>
+	<?php
+	$pattern = "/[a-zA-Z]/";
+	$match = preg_match($pattern, $_POST['amt']);
+	include("connection.php");
+		if(isset($_POST['save'])){
+			if(!empty($_POST['ppa'])&&!empty($_POST['amt'])){
+				if ($match<1){
+			$q = mysql_query("select * from ppa where ppa='".$_POST['ppa']."'");
+			if (mysql_num_rows($q)>0){
+			?>
+				<script>
+					alert('PPA code already exist');
+				</script>
+				<?php	
+				}else{
+			include("connection.php");
+			$qq = mysql_query("insert into ppa (ppa,amount) values ('".$_POST['ppa']."','".$_POST['amt']."')");
+				?>
+				<script>
+					alert('P.P.A. successfully save !');
+				</script>
+				
+				<?php	
+				}
+				}else{
+				?>	<script>
+					alert('Please input a number only')
+					</script>
+				
+				<?php
+				}
+			}else{?>
+			<script>
+				alert('Please fill up all the fields')
+			</script>
+				<?php
+		}
+		}else if (isset($_POST['buttonresp'])){
+			header("location:personalresp.php");
+		}else if (isset($_POST['buttonppa'])){
+			header("location:personalexp.php");
+		}
+	
+	?>
+		<td style="text-align:center;font-size:18px;"><input type="text" name="ppa"style="margin-left:-50px;width:350px;"><button style="margin-left:5px;"class="g-button blue">...</button></td>
+		<td style="text-align:center;font-size:18px;"><input type="text" name="amt"placeholder="0.00"style="width:300px;text-align:right;"></td>
+		<td style="text-align:center;font-size:18px;"><button name="save"style="margin-left:10px;"class="g-button green"><i class="icon-ok"></i></button></td>
+		</form>
+	</tr>
+</table>
+<br><br>		
+<table border="1" style="margin:10px 10px 10px 10px;width:1000px;height:50px;border:1px solid black;">
+	<tr>
+		<th>PPA</th>
+		<th>Amount</th>
+		<th>Actions</th>
+	</tr><?php
+	$query = mysql_query("select * from ppa");
+	while ($data = mysql_fetch_assoc($query)){
+	?>
+	<tr>
+		<td style="text-align:center;width:450px;"><?php echo $data['ppa']; ?></td>
+		<td style="text-align:center;width:350px;"><?php echo $data['amount'];?></td>
+		<td style="text-align:center;width:250px;"><button style="margin-left:5px;"class="g-button green"><i class="icon-pencil"></i><button class="g-button red"><i class="icon-remove"></i></button></td>
+	</tr>
+	<?php } ?>
+</table>
+</div>
+</body>
+</html>
